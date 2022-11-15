@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviour
+public class Player2 : MonoBehaviour
 {
-    public float speed = 10;
+    public float speed = 20;
     public Joystick joyStick;
     public Transform firePoint;
     public GameObject bulletPrefab;
-
     private CharacterController controller;
-
     private GameObject focusEnemy;
-   
+
+    private float hp = 400f;
+    
     void Start()
     {
          controller = GetComponent<CharacterController>();
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
     
     void Update()
     {
+        
          // 找到最近的一個目標 Enemy 的物件
         GameObject[] enemys = GameObject.FindGameObjectsWithTag("Enemy");
 
@@ -72,7 +74,6 @@ public class Player : MonoBehaviour
 
          controller.Move(dir * speed * Time.deltaTime);
     }
-
     
      void Fire()
     {
@@ -89,6 +90,27 @@ public class Player : MonoBehaviour
 
             
             yield return new WaitForSeconds(0.4f);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+       
+        if (other.tag == "Rock")
+        {
+
+            Rock rock = other.GetComponent<Rock>();
+
+           
+            hp -= rock.atk;
+
+           
+            if (hp <= 0)
+            {
+                gameObject.SetActive(false);
+                Destroy(gameObject);
+                SceneManager.LoadScene("Level-2");
+            }
         }
     }
 }
